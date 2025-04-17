@@ -35,44 +35,52 @@ def get_windows_buttons() -> List[Dict]:
             continue
 
     return buttons
-
-
-def get_browser_buttons(profile_path: str, chrome_path: str) -> List[Dict]:
-    """
-    Scrape DOM buttons from a Chrome tab using Playwright.
-
-    Args:
-        profile_path: Chrome user profile path.
-        chrome_path: Path to Chrome executable.
-
-    Returns:
-        List of button/anchor metadata.
-    """
+def get_browser_buttons(profile_path: str, chrome_path: str) -> list:
     buttons = []
-    with sync_playwright() as p:
-        browser = p.chromium.launch_persistent_context(
-            user_data_dir=profile_path,
-            executable_path=chrome_path,
-            headless=False
-        )
-
-        page = browser.pages[0] if browser.pages else browser.new_page()
-        page.wait_for_timeout(1500)
-        elements = page.locator("button, a")
-
-        for i in range(elements.count()):
-            el = elements.nth(i)
-            try:
-                text = el.inner_text().strip()
-                box = el.bounding_box()
-                if text and box:
-                    buttons.append({
-                        "text": text,
-                        "bounding_box": box
-                    })
-            except:
-                continue
-
-        browser.close()
-
+    try:
+        with sync_playwright() as p:
+            # Launch without closing the browser when the context closes
+            browser = p.chromium.launch_persistent_context(
+                user_data_dir=profile_path,
+                headless=False,
+                executable_path=chrome_path,
+                args=['--start-maximized', '--disable-extensions']
+            )
+            
+            # Check if there are existing pages, otherwise create one
+            page = browser.pages[0] if len(browser.pages) > 0 else browser.new_page()
+            
+            # Wait longer for the page to stabilize
+            page.wait_for_load_state("networkidle", timeout=30000)
+            
+            # Navigate only if needed (if not already on a page)
+            current_url = page.url
+            if current_url == "about:blank" or not current_url.startswith("http"):
+                page.goto("https://www.google.com", timeout=30000)
+                page.wait_for_load_state("networkidle", timeout=30000)
+            
+            # Collect all interactive elements (not just buttons)
+            for selector in ["button", "input[type='button']", "a", ".button", "[role='button']"]:
+                elements = page.query_selector_all(selector)
+                for element in elements:
+                    try:
+                        bbox = element.bounding_box()
+                        if bbox:  # Only include visible elements
+                            text = element.inner_text() or element.get_attribute("value") or element.get_attribute("aria-label") or ""
+                            buttons.append({
+                                "text": text,
+                                "rectangle": {
+                                    "left": int(bbox["x"]),
+                                    "top": int(bbox["y"]),
+                                    "right": int(bbox["x"] + bbox["width"]),
+                                    "bottom": int(bbox["y"] + bbox["height"])
+                                }
+                            })
+                    except Exception as e:
+                        continue
+                        
+            # Don't close the browser automatically
+            # browser.close() - intentionally leaving the browser open
+    except Exception as e:
+        print(f"Error in get_browser_buttons: {e}")
     return buttons
