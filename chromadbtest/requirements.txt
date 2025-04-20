@@ -1,0 +1,8 @@
+langchain
+chromadb
+openai
+tiktoken
+beautifulsoup4
+html2text
+sentence-transformers
+langchain-community
