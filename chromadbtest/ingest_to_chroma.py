@@ -1,16 +1,21 @@
+# ingest_to_chroma.py
+
 from langchain_community.document_loaders import TextLoader, WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
-# Local embedding model from Hugging Face
-embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+# 🔹 Use BGE embeddings (local, no API needed)
+embedding_model = HuggingFaceEmbeddings(
+    model_name="BAAI/bge-base-en-v1.5",
+    encode_kwargs={"normalize_embeddings": True}
+)
 
-# 1. Load local file
+# 1. Load from file
 file_loader = TextLoader("sample.txt")
 file_docs = file_loader.load()
 
-# 2. Load web content
+# 2. Load from web
 urls = [
     "https://book.hacktricks.xyz/linux-hardening/privilege-escalation",
     "https://owasp.org/www-project-web-security-testing-guide/"
@@ -18,19 +23,15 @@ urls = [
 web_loader = WebBaseLoader(urls)
 web_docs = web_loader.load()
 
-# 3. Combine docs
-all_docs = file_docs + web_docs
-
-# 4. Chunk the text
+# 3. Chunk content
 splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
-chunks = splitter.split_documents(all_docs)
+chunks = splitter.split_documents(file_docs + web_docs)
 
-# 5. Embed and store in Chroma
+# 4. Store in Chroma
 db = Chroma.from_documents(
     chunks,
     embedding=embedding_model,
     persist_directory="chroma_db"
 )
-db.persist()
 
-print("✅ Ingested file + web content into Chroma.")
+print("✅ Ingested file + web content into Chroma using BGE embeddings.")
