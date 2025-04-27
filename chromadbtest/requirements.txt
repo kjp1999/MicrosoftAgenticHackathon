@@ -1,0 +1,13 @@
+langchain
+chromadb
+openai
+tiktoken
+beautifulsoup4
+html2text
+sentence-transformers
+langchain-community
+llama-index
+llama-index-embeddings-huggingface
+llama-index-vector-stores-chroma
+llama-index-readers-web
+llama-index-llms-huggingface
