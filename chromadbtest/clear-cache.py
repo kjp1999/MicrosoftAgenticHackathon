@@ -11,12 +11,21 @@ import shutil
 import os
 from pathlib import Path
 
-# Clear model cache at startup
-model_cache_dir = Path.home() / ".cache" / "huggingface" / "hub"
-if os.path.exists(model_cache_dir):
-    print("[Startup] Clearing Hugging Face model cache...")
-    shutil.rmtree(model_cache_dir, ignore_errors=True)
+# HuggingFace cache directory
+hf_cache_dir = Path.home() / ".cache" / "huggingface" / "hub"
 
-import shutil
-shutil.rmtree("chroma_db", ignore_errors=True)
+# Clear HuggingFace model cache
+def clear_huggingface_cache():
+    if hf_cache_dir.exists():
+        print(f"🧹 Clearing HuggingFace model cache at: {hf_cache_dir}")
+        shutil.rmtree(hf_cache_dir)
+        print("✅ HuggingFace cache cleared successfully.")
+    else:
+        print("⚡ HuggingFace cache directory does not exist. Nothing to clear.")
+
+if __name__ == "__main__":
+    clear_huggingface_cache()
+
+# import shutil
+# shutil.rmtree("chroma_db", ignore_errors=True)
 
