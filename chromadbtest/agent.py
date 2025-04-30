@@ -1,0 +1,136 @@
+from langchain_ollama import ChatOllama
+from langchain_core.tools import tool
+from langgraph.prebuilt import create_react_agent
+from search_tool import GeminiSearchEngine
+from llama_index.core import StorageContext, load_index_from_storage, Settings
+from llama_index.llms.ollama import Ollama
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.core.prompts import PromptTemplate
+import os
+
+
+os.environ["GOOGLE_API_KEY"] = "AIzaSyCNJi3WZImqVESigMkp4lXN7HNNI-uIcUg"  
+
+llm = ChatOllama(
+    model = "artifish/llama3.2-uncensored:latest",
+    temperature = 0.0,
+)
+
+OLLAMA_SERVER_URL = "http://localhost:11434"
+
+# Step 0: Setup Embedding Model
+Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
+
+# Step 1: Setup Ollama LLM
+Settings.llm = Ollama(
+    model="artifish/llama3.2-uncensored",
+    base_url=OLLAMA_SERVER_URL,
+    request_timeout=120  # Timeout in seconds (optional)
+)
+
+@tool
+def internet_search(query: str) -> str:
+    """
+    Performs an internet search using the GeminiSearchEngine with grounding support. Used to get Information to help come up with the best plan
+
+    Args:
+        query (str): The user's search query.
+        search_engine (GeminiSearchEngine): An instance of a search engine (default: GeminiSearch).
+
+    Returns:
+        str: A text-based response generated from search results and LLM output.
+    """
+    search_engine = GeminiSearchEngine()
+
+    result = search_engine.search(query)
+    return result
+
+
+@tool
+def query_database(query: str) -> str:
+    """
+    Queries a local document index stored in ChromaDB via LlamaIndex. It has Information regarding ways to pentest and kalilinux documentation that can to come up with the best plan
+
+    Args:
+        query (str): The user's natural language question.
+
+    Returns:
+        str: The response synthesized from the top relevant document chunks.
+    """
+    # Load the index from disk
+    storage_context = StorageContext.from_defaults(persist_dir="./storage")
+    index = load_index_from_storage(storage_context)
+
+    # Define prompt template for consistent responses
+    custom_prompt = PromptTemplate(
+        "You are a cybersecurity expert assistant.\n"
+        "Based ONLY on the context below, answer the question as clearly and completely as possible.\n"
+        "If you don't know, say 'I don't know'.\n\n"
+        "Context:\n{context_str}\n\n"
+        "Question: {query_str}\n"
+        "Answer:"
+    )
+
+    query_engine = index.as_query_engine(
+        similarity_top_k=10,
+        text_qa_template=custom_prompt,
+    )
+
+    response = query_engine.query(query)
+    return str(response)
+
+
+agent = create_react_agent(model = llm,
+                           tools = [internet_search,query_database],
+                           prompt = """
+                                    You are Kali-savvy penetration-testing assistant **KaliFox**.
+                                    You have two tools:
+
+                                    • internet_search — fetch up-to-the-minute data from the web (uses Gemini grounded search)
+                                    • query_database  — fetch authoritative docs already stored in Chroma
+
+                                    ***Operating rules***
+                                    1. Think step-by-step and decide which tool will yield *specific* evidence.
+                                    2. Cite commands, CVE IDs, tools, or Kali packages where useful.
+                                    3. Return a numbered, actionable plan — no vague advice.
+
+                                    ***Examples***
+
+                                    ### Example 1
+                                    User: “Give me a reconnaissance checklist for *.dev target*”
+                                    Assistant (reasoning): “I need fresh subdomain enumeration techniques”
+                                    → TOOL CALL: internet_search("subdomain enumeration with Kali 2024")
+                                    ...tool returns...
+                                    → TOOL CALL: query_database("nmap service enumeration cheatsheet")
+                                    ...tool returns...
+                                    Assistant (final):
+                                    1. Use `amass enum -d target.dev …`
+                                    2. Run `nmap -sV -p- --script=banner targetIP` …
+                                    3. …
+
+                                    ### Example 2
+                                    User: “How do I build a custom Kali ISO with only wireless tools?”
+                                    → TOOL CALL: query_database("live-build custom Kali ISO wireless metapackages")
+                                    …tool returns…
+                                    Assistant (final):
+                                    1. Install `live-build` (`apt install live-build`) …
+                                    2. Edit `kali-config/variant-wireless/package-lists/custom.list.chroot` …
+                                    3. …
+
+                                    ***End of examples***
+
+                                    Now handle the next user request following the same pattern.
+                            """
+                        )
+
+response = agent.invoke({
+    "messages":[
+        {
+            "role": "user",
+            "content": "Give me a plan on how to pentestest xyz.com"
+        }
+    ] 
+})
+
+for m in response["messages"]:
+    m.pretty_print()

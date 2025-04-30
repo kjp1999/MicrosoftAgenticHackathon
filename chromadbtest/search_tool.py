@@ -13,7 +13,7 @@ from google.genai.types import (
 )
 
 # Set Gemini API Key in the environment
-os.environ["GOOGLE_API_KEY"] = ""  
+os.environ["GOOGLE_API_KEY"] = "AIzaSyCNJi3WZImqVESigMkp4lXN7HNNI-uIcUg"  
 
 class GeminiSearchEngine:
     def __init__(self):
@@ -82,7 +82,7 @@ class GeminiSearchEngine:
 
                 citation_text = "\n".join(citations) if citations else "No citations available"
 
-                print(f"📝 Gemini Response: {response.text}")
+                # print(f"📝 Gemini Response: {response.text}")
                 return f"{response.text}\n\nSources:\n{citation_text}\n\n"
 
             except Exception as e:
