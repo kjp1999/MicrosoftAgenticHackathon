@@ -21,3 +21,6 @@ google-genai
 langchain-ollama
 langgraph
 langchain-core
+
+langchain-openai
+
