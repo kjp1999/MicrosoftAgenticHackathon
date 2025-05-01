@@ -158,7 +158,8 @@ graph TD
 ---
 
 ## Roadmap
-* Multi-vector memory (Redis hierarchical index)  
+* Multi-vector memory (Redis hierarchical index)
+* Add and connect UI agent
 * Replace Tk prototype with FastAPI + React dashboard  
 * Auto-recon loop—agent refines plan after each executed command  
 
