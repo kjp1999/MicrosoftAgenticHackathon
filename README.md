@@ -14,7 +14,7 @@ _“Offense-aware, evidence-first plans in a single command.”_
 
 ### Note on `uiagent/` Prototype  
 You’ll notice a **`uiagent/`** folder in the repo. This was an **experimental front-end** we hoped to layer on top of the LangGraph core—giving the pentesting agent a simple desktop/web UI for chat, run-history, and evidence previews.  
-The back-end logic (in `pentestagent/`) is fully functional, but the UI wrapper is **still a work-in-progress**; we kept it in the branch as a reference for future contributors who might want to pick it up and finish the wiring.
+The back-end logic (in `pentestagent/`) is fully functional, but the UI wrapper is **still a work-in-progress**.
 
 ---
 
