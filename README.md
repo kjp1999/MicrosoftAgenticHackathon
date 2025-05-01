@@ -1,8 +1,6 @@
 # KaliFox – Agentic Pentest Assistant  
 _“Offense-aware, evidence-first plans in a single command.”_
 
-![screenshot](uiagent/screen.png)
-
 ## Table of Contents
 1. [Project overview](#project-overview)  
 2. [Folder structure](#folder-structure)  
@@ -109,20 +107,10 @@ playwright install
 
 ---
 
-## Running the agent
-* **Interactive CLI**  
+## Running the agent 
   ```bash
   python pentestagent/pentest.py
   ```
-* **One-off prompt**  
-  ```bash
-  python pentestagent/pentest.py --prompt "How would you pentest xyz.com?"
-  ```
-* **UI prototype**  
-  ```bash
-  python uiagent/run_agent.py
-  ```
-
 ---
 
 ## Updating the knowledge base
@@ -174,6 +162,3 @@ graph TD
 * Replace Tk prototype with FastAPI + React dashboard  
 * Auto-recon loop—agent refines plan after each executed command  
 
----
-
-© 2025 KaliFox contributors • MIT License
