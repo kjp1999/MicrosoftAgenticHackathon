@@ -122,6 +122,9 @@ playwright install
    ```
 
 ---
+## Agentic pentesting flow
+![image](https://github.com/user-attachments/assets/9f6def42-cf88-4b37-84bc-facc6740d444)
+
 
 ## Architecture in depth (Initial Plan if we got everything working together)
 ```mermaid
