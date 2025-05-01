@@ -1,0 +1,2 @@
+Privilege escalation on Linux can involve misconfigurations like insecure sudo rules, writable cron jobs, or SUID binaries. You can use tools like linPEAS or check 'sudo -l' to find escalation paths.
+Linux privilege escalation techniques often include SUID abuse, sudo misconfiguration, cron jobs, or writable binaries. Tools like linPEAS and manual checks using 'sudo -l' help find these weaknesses.

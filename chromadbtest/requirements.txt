@@ -1,0 +1,23 @@
+langchain
+chromadb
+openai
+tiktoken
+beautifulsoup4
+html2text
+sentence-transformers
+langchain-community
+llama-index
+llama-index-embeddings-huggingface
+llama-index-vector-stores-chroma
+llama-index-readers-web
+llama-index-llms-huggingface
+ollama 
+llama-index-llms-ollama
+# requests-html
+# lxml_html_clean
+# websockets==10.4
+playwright
+google-genai
+langchain-ollama
+langgraph
+langchain-core
