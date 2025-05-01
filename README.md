@@ -10,7 +10,11 @@ _“Offense-aware, evidence-first plans in a single command.”_
 6. [Updating the knowledge base](#updating-the-knowledge-base)  
 7. [Architecture in depth](#architecture-in-depth)  
 8. [Troubleshooting](#troubleshooting)  
-9. [Roadmap](#roadmap)  
+9. [Roadmap](#roadmap)
+
+### Note on `uiagent/` Prototype  
+You’ll notice a **`uiagent/`** folder in the repo. This was an **experimental front-end** we hoped to layer on top of the LangGraph core—giving the pentesting agent a simple desktop/web UI for chat, run-history, and evidence previews.  
+The back-end logic (in `pentestagent/`) is fully functional, but the UI wrapper is **still a work-in-progress**; we kept it in the branch as a reference for future contributors who might want to pick it up and finish the wiring.
 
 ---
 
@@ -76,21 +80,17 @@ python pentestagent/pentest.py
 ## Detailed setup
 
 ### 1. Python & system packages
-* **Python 3.11** required.  
-* Linux extras:  
-  ```bash
-  sudo apt update && sudo apt install -y libnss3 libatk1.0-0 libdrm2 \
-       libxkbcommon0 libxdamage1
-  ```
+* **Python 3.11** required.
+* **Pull this github for docker container setup** https://github.com/XaviTorello/kali-full-docker required.
 
 ### 2. LLM back-ends
 
-| Option | Pros | Cons | Setup |
-|--------|------|------|-------|
-| **OpenAI GPT-4o** | Highest accuracy | Paid tokens | set `OPENAI_API_KEY` |
-| **Ollama (local)** | 100 % offline, free | Needs GPU / 12 GB RAM | `brew install ollama` → `ollama pull llama3` → `ollama serve` |
+| LLMS | 
+|--------|
+| **OpenAI GPT-4o** |
+| **Ollama  (local) (Model = artifish/llama3.2-uncensored)** |
 
-Agent automatically falls back to Ollama if `OPENAI_API_KEY` is unset.
+
 
 ### 3. Environment variables
 ```
@@ -123,7 +123,7 @@ playwright install
 
 ---
 
-## Architecture in depth
+## Architecture in depth (Initial Plan if we got everything working together)
 ```mermaid
 graph TD
     A[User prompt] -->|LangGraph state| B{Reason / decide}
