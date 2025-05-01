@@ -35,11 +35,11 @@ class GeminiSearchEngine:
     def _rotate_model(self):
         self.current_model_index += 1
         if self.current_model_index >= len(self.models):
-            raise RuntimeError("❌ All available models exhausted for today.")
+            raise RuntimeError("All available models exhausted for today.")
 
     def _check_reset_daily_usage(self):
         if datetime.now().date() != self.usage_reset_date:
-            print("🔄 Resetting daily usage counts...")
+            print("Resetting daily usage counts...")
             self.daily_usage = {model: 0 for model in self.models}
             self.usage_reset_date = datetime.now().date()
 
@@ -49,7 +49,7 @@ class GeminiSearchEngine:
         while True:
             model_name = self.models[self.current_model_index]
             if self.daily_usage[model_name] >= self.max_free_grounding_requests:
-                print(f"⚠️ {model_name} has reached daily limit. Switching models...")
+                print(f"{model_name} has reached daily limit. Switching models...")
                 self._rotate_model()
                 continue
 
@@ -82,15 +82,15 @@ class GeminiSearchEngine:
 
                 citation_text = "\n".join(citations) if citations else "No citations available"
 
-                # print(f"📝 Gemini Response: {response.text}")
+                # print(f"Gemini Response: {response.text}")
                 return f"{response.text}\n\nSources:\n{citation_text}\n\n"
 
             except Exception as e:
                 error_str = str(e)
-                print(f"⚠️ Gemini API error: {error_str}")
+                print(f"Gemini API error: {error_str}")
 
                 if "429" in error_str or "quota" in error_str.lower():
-                    print("🚨 Quota or rate limit hit. Switching models...")
+                    print("Quota or rate limit hit. Switching models...")
                     self._rotate_model()
                     continue
                 else:

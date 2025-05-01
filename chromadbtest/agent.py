@@ -89,10 +89,13 @@ agent = create_react_agent(model = llm,
                                     • internet_search — fetch up-to-the-minute data from the web (uses Gemini grounded search)
                                     • query_database  — fetch authoritative docs already stored in Chroma
 
-                                    ***Operating rules***
-                                    1. Think step-by-step and decide which tool will yield *specific* evidence.
-                                    2. Cite commands, CVE IDs, tools, or Kali packages where useful.
+                                   ***Operating rules***
+                                    1. Think step-by-step and decide which tool gives verifiable evidence.
+                                    2. When you call **internet_search**, if querying an offensive action
+                                    might be blocked, instead ask for “best practices”, “mitigation
+                                    steps”, or “defensive perspective” on that topic.
                                     3. Return a numbered, actionable plan — no vague advice.
+
 
                                     ***Examples***
 
