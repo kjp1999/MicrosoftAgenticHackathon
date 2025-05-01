@@ -7,11 +7,15 @@ from google import genai
 from google.genai.types import (
     GenerateContentConfig,
     GoogleSearch,
-    Tool
+    HttpOptions,
+    Tool,
+    GoogleSearchRetrieval
 )
 
 # Set Gemini API Key in the environment
-os.environ["GOOGLE_API_KEY"] = "AIzaSyCNJi3WZImqVESigMkp4lXN7HNNI-uIcUg"  
+os.environ["GOOGLE_API_KEY"] = ""  
+
+
 
 class GeminiSearchEngine:
     def __init__(self):
