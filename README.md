@@ -1,6 +1,25 @@
 # KaliFox – Agentic Pentest Assistant  
 _“Offense-aware, evidence-first plans in a single command.”_
 
+> **v2 (current):** Hermes-native architecture — Hermes Agent runs directly on a
+> Kali VM with **Qwen 3.8 via OpenRouter**, using a pentest skill suite and
+> parallel subagent fan-out. See [`pentestagent/ARCHITECTURE.md`](pentestagent/ARCHITECTURE.md).
+> The original LangGraph prototype lives in [`pentestagent/legacy/`](pentestagent/legacy/).
+
+## Quick start (v2 — Kali VM)
+```bash
+# 1 – Clone on/onto the Kali VM
+git clone -b Kaleb https://github.com/kjp1999/MicrosoftAgenticHackathon.git
+cd MicrosoftAgenticHackathon/pentestagent
+
+# 2 – One-shot bootstrap: installs Hermes, wires OpenRouter/Qwen, installs skills
+export OPENROUTER_API_KEY="sk-or-..."   # optional; otherwise add it to ~/.hermes/.env when prompted
+bash setup-kali.sh
+
+# 3 – Run an assessment (authorized targets only!)
+hermes chat -q "Load skill pentest-orchestrator and assess testhtml5.vulnweb.com"
+```
+
 ## Table of Contents
 1. [Project overview](#project-overview)  
 2. [Folder structure](#folder-structure)  
